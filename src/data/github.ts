@@ -1,5 +1,5 @@
 const USER = 'Stephen-SMH';
-const token = import.meta.env.GITHUB_TOKEN as string | undefined;
+const token = process.env.GITHUB_TOKEN;
 
 export interface Repo {
   name: string;
