@@ -42,7 +42,7 @@ const fmt = (iso: string) =>
         <div class="hero reveal">
           <span class="eyebrow">Portfolio · Synced with GitHub</span>
           <h2>I build games, apps and the tools behind them.</h2>
-          <p>A living index of everything I've shipped. Repositories, stars and activity are pulled from GitHub on every build.</p>
+          <p>A living index of everything I've shipped. Repositories and stars refresh daily; the activity feed is live.</p>
           <div class="hero-cta">
             <a class="btn" href="#games"><span>Play my games</span><i class="circ"><Icon name="arrow" /></i></a>
             <a class="btn ghost" href="#repositories"><span>Browse repositories</span><i class="circ"><Icon name="arrow" /></i></a>
@@ -170,12 +170,11 @@ const fmt = (iso: string) =>
       <!-- ACTIVITY -->
       <div class="panel" data-panel="activity" hidden>
         <div class="hero small reveal">
-          <span class="eyebrow">Activity</span>
+          <span class="eyebrow">Activity · <span id="liveTag">Updated daily</span></span>
           <h2>What I've been up to.</h2>
         </div>
         <div class="bezel reveal"><div class="core">
-          {feed.length === 0 ? <p class="empty">No recent public activity.</p> : (
-            <ol class="timeline">
+          <ol class="timeline" id="timeline">
               {feed.map(({ e, d }) => (
                 <li>
                   <span class="dot"></span>
@@ -186,8 +185,7 @@ const fmt = (iso: string) =>
                   <time class="muted">{ago(e.created_at)}</time>
                 </li>
               ))}
-            </ol>
-          )}
+          </ol>
         </div></div>
       </div>
 
@@ -196,6 +194,8 @@ const fmt = (iso: string) =>
   </main>
 
   <script>
+    import { ago, describe } from '../data/format';
+
     const panels = [...document.querySelectorAll<HTMLElement>('[data-panel]')];
     const links = [...document.querySelectorAll<HTMLElement>('[data-tab]')];
     const sheet = document.getElementById('sheet')!;
@@ -266,5 +266,45 @@ const fmt = (iso: string) =>
       empty.hidden = shown > 0;
     }
     [q, lang, sort].forEach((el) => el.addEventListener('input', apply));
+
+    // Live activity feed: replaces the build-time snapshot when GitHub responds.
+    (async () => {
+      const list = document.getElementById('timeline');
+      const tag = document.getElementById('liveTag');
+      if (!list) return;
+      try {
+        const res = await fetch('https://api.github.com/users/Stephen-SMH/events/public?per_page=30');
+        if (!res.ok) throw new Error(String(res.status));
+        const events = await res.json();
+        const items = events.map((e: any) => ({ e, d: describe(e) })).filter((x: any) => x.d).slice(0, 15);
+        if (!items.length) return;
+        list.replaceChildren(
+          ...items.map(({ e, d }: any) => {
+            const li = document.createElement('li');
+            const dot = Object.assign(document.createElement('span'), { className: 'dot' });
+            const body = document.createElement('div');
+            const p = document.createElement('p');
+            const a = document.createElement('a');
+            a.href = `https://github.com/${e.repo.name}`;
+            a.target = '_blank';
+            a.rel = 'noopener';
+            a.textContent = e.repo.name.split('/')[1];
+            p.append(`${d.verb} `, a);
+            body.append(p);
+            if (d.detail) {
+              const small = document.createElement('small');
+              small.textContent = d.detail;
+              body.append(small);
+            }
+            const time = Object.assign(document.createElement('time'), { className: 'muted', textContent: ago(e.created_at) });
+            li.append(dot, body, time);
+            return li;
+          }),
+        );
+        if (tag) tag.textContent = 'Live';
+      } catch {
+        /* keep the build-time snapshot */
+      }
+    })();
   </script>
 </Base>
