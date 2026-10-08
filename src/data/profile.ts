@@ -1,12 +1,13 @@
 // Edit this file to change the text on the site.
 export const profile = {
   first: 'Stephen',
-  tagline: 'Software engineer building games, apps and the tools behind them.',
+  tagline: 'I make games: social deduction, narrative survival and a few experiments in between.',
   email: 'soemoehtetstephen@gmail.com',
+  avatar: 'https://github.com/Stephen-SMH.png',
+  github: 'https://github.com/Stephen-SMH',
+  // Link to the separate software engineering portfolio.
+  engineerSite: 'https://stephen-smh.github.io',
   statement:
-    "I'm a software engineer studying at KMITL. I build games, mobile apps and backend tools in Flutter, TypeScript, Python and Go, and I like shipping things people can actually play.",
-  tools: [
-    'Flutter', 'Flame', 'Dart', 'TypeScript', 'React', 'Next.js', 'Astro', 'Three.js', 'Phaser',
-    'Python', 'Go', 'Redis', 'Ollama', 'Vercel', 'GitHub Actions',
-  ],
+    "I'm a game developer who likes small, readable rules that add up to big moments. I've built a social deduction game against bots, a narrative survival game for a game jam, and a few course projects along the way.",
+  jams: 1,
 };

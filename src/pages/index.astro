@@ -3,35 +3,21 @@ import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
 import { games } from '../data/games';
 import { profile } from '../data/profile';
-import { getData, colorOf, ago, describe } from '../data/github';
 
-const { user, repos: all, events, contrib } = await getData();
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-const repos = all.filter((r) => !r.fork);
-
-const langCount = new Map<string, number>();
-for (const r of repos) if (r.language) langCount.set(r.language, (langCount.get(r.language) ?? 0) + 1);
-const langs = [...langCount.entries()].sort((a, b) => b[1] - a[1]);
-const stars = repos.reduce((n, r) => n + r.stargazers_count, 0);
-
-const pad = contrib.days.length ? new Date(contrib.days[0].date + 'T00:00:00Z').getUTCDay() : 0;
-const cells = [...Array(pad).fill(null), ...contrib.days];
-
-const fmt = (iso: string) =>
-  new Date(iso).toLocaleDateString('en', { month: 'short', day: 'numeric', year: 'numeric' });
-
-const sections = ['intro', 'about', 'skills', 'games', 'repos', 'activity'];
+const tech = [...new Set(games.flatMap((g) => g.tech))];
+const sections = ['intro', 'about', 'games', 'toolkit', 'contact'];
 const words = profile.statement.split(' ');
 const stats = [
-  [repos.length, 'public repositories'],
-  [contrib.total, 'contributions this year'],
-  [langs.length, 'languages'],
-  [user.followers, 'followers'],
+  [games.length, 'games built'],
+  [games.filter((g) => g.play).length, 'playable online'],
+  [profile.jams, 'game jam'],
+  [tech.length, 'technologies used'],
 ];
 ---
 <Base
-  title={`${profile.first} — Portfolio`}
-  description="Software engineer and game developer. Games, projects and live GitHub activity."
+  title={`${profile.first} — Game Portfolio`}
+  description="Game portfolio: Werewolf, The Knock and more. Play them in the browser."
 >
   <!-- Scroll progress -->
   <div class="bar" id="bar">
@@ -51,7 +37,7 @@ const stats = [
     <section class="intro" id="intro">
       <div class="wrap intro-grid">
         <div>
-          <span class="eyebrow">Software engineer · Game developer</span>
+          <span class="eyebrow">Game developer</span>
           <h1 class="mega">
             <span class="ln"><span style="--i:0">Hey,</span></span>
             <span class="ln"><span style="--i:1">I'm <em>{profile.first}.</em></span></span>
@@ -59,12 +45,11 @@ const stats = [
           <p class="lead rise" style="--i:3">{profile.tagline}</p>
           <div class="cta rise" style="--i:4">
             <a class="btn" href="#games"><span>Play my games</span><i class="circ"><Icon name="arrow" /></i></a>
-            <a class="btn ghost" href={user.html_url} target="_blank" rel="noopener"><span>GitHub</span><i class="circ"><Icon name="arrow" /></i></a>
+            <a class="btn ghost" href={profile.engineerSite} target="_blank" rel="noopener"><span>Engineering portfolio</span><i class="circ"><Icon name="arrow" /></i></a>
           </div>
         </div>
         <div class="portrait rise" style="--i:2">
-          <div class="frame"><img src={user.avatar_url} alt={user.name ?? user.login} width="480" height="480" /></div>
-          <span class="badge"><i></i>Open to opportunities</span>
+          <div class="frame"><img src={profile.avatar} alt="Stephen" width="480" height="480" /></div>
         </div>
       </div>
       <a class="scroll-hint" href="#about" aria-label="Scroll down"><span></span></a>
@@ -85,22 +70,17 @@ const stats = [
       </div>
     </section>
 
-    <!-- SKILLS -->
-    <section class="skills" id="skills">
+    <!-- TOOLKIT -->
+    <section class="skills" id="toolkit">
       <div class="wrap">
-        <span class="eyebrow">Skills</span>
-        <h2 class="h2 reveal">What I build with.</h2>
-        <h3 class="sub reveal">Languages <small>by number of repositories</small></h3>
+        <span class="eyebrow">Toolkit</span>
+        <h2 class="h2 reveal">What my games are made with.</h2>
         <div class="pills reveal">
-          {langs.map(([l, n]) => <span class="pill"><i style={`background:${colorOf(l)}`}></i>{l}<em>{n}</em></span>)}
-        </div>
-        <h3 class="sub reveal">Tools &amp; platforms</h3>
-        <div class="pills reveal">
-          {profile.tools.map((t) => <span class="pill">{t}</span>)}
+          {tech.map((t) => <span class="pill">{t}</span>)}
         </div>
       </div>
       <div class="marquee" aria-hidden="true">
-        <div>{[0, 1].map(() => profile.tools.map((t) => <span>{t}</span>))}</div>
+        <div>{[0, 1].map(() => tech.map((t) => <span>{t}</span>))}</div>
       </div>
     </section>
 
@@ -147,91 +127,13 @@ const stats = [
       ))}
     </section>
 
-    <!-- REPOS -->
-    <section class="repos" id="repos">
-      <div class="wrap">
-        <span class="eyebrow">Repositories</span>
-        <h2 class="h2 reveal">Everything else I've built.</h2>
-        <div class="toolbar reveal">
-          <label class="search">
-            <Icon name="search" />
-            <input id="q" type="search" placeholder="Find a repository…" autocomplete="off" />
-          </label>
-          <select id="lang" aria-label="Language">
-            <option value="">All languages</option>
-            {langs.map(([l]) => <option value={l}>{l}</option>)}
-          </select>
-          <select id="sort" aria-label="Sort">
-            <option value="updated">Last updated</option>
-            <option value="stars">Stars</option>
-            <option value="name">Name</option>
-          </select>
-        </div>
-        <div class="bezel reveal"><div class="core flush">
-          <ul class="repo-list" id="repoList">
-            {repos.map((r) => (
-              <li data-name={r.name.toLowerCase()} data-lang={r.language ?? ''} data-stars={r.stargazers_count} data-updated={+new Date(r.pushed_at)}>
-                <div class="repo-main">
-                  <a href={r.html_url} target="_blank" rel="noopener">{r.name}</a>
-                  {r.description && <p>{r.description}</p>}
-                  <div class="row">
-                    {r.language && <span><i style={`background:${colorOf(r.language)}`}></i>{r.language}</span>}
-                    {r.stargazers_count > 0 && <span><Icon name="star" />{r.stargazers_count}</span>}
-                    {r.forks_count > 0 && <span><Icon name="fork" />{r.forks_count}</span>}
-                    <span class="muted">Updated {fmt(r.pushed_at)}</span>
-                  </div>
-                </div>
-                {r.homepage && <a class="live" href={r.homepage} target="_blank" rel="noopener">Live <Icon name="arrow" /></a>}
-              </li>
-            ))}
-          </ul>
-          <p class="empty" id="empty" hidden>No repositories match.</p>
-        </div></div>
-      </div>
-    </section>
-
-    <!-- ACTIVITY -->
-    <section class="activity" id="activity">
-      <div class="wrap">
-        <span class="eyebrow">Activity · <span id="liveTag">Updated daily</span></span>
-        <h2 class="h2 reveal">What I've been up to.</h2>
-
-        {contrib.days.length > 0 && (
-          <div class="bezel reveal"><div class="core">
-            <div class="card-head"><h3>Contributions</h3><span class="muted">{contrib.total} in the last year</span></div>
-            <div class="heat-scroll">
-              <div class="heat">
-                {cells.map((d) => d ? <i class={`l${d.level}`} title={`${d.count} on ${fmt(d.date)}`}></i> : <i class="gap"></i>)}
-              </div>
-            </div>
-            <div class="legend"><span>Less</span><i class="l0"></i><i class="l1"></i><i class="l2"></i><i class="l3"></i><i class="l4"></i><span>More</span></div>
-          </div></div>
-        )}
-
-        <div class="bezel reveal"><div class="core">
-          <ol class="timeline" id="timeline">
-            {events.map((e) => ({ e, d: describe(e) })).filter((x) => x.d).slice(0, 15).map(({ e, d }) => (
-              <li>
-                <span class="dot"></span>
-                <div>
-                  <p>{d!.verb} <a href={`https://github.com/${e.repo.name}`} target="_blank" rel="noopener">{e.repo.name.split('/')[1]}</a></p>
-                  {d!.detail && <small>{d!.detail}</small>}
-                </div>
-                <time class="muted">{ago(e.created_at)}</time>
-              </li>
-            ))}
-          </ol>
-        </div></div>
-      </div>
-    </section>
-
     <!-- CONTACT -->
     <section class="contact" id="contact">
       <div class="wrap">
         <span class="eyebrow">Contact</span>
-        <h2 class="mega small reveal">Let's build<br />something.</h2>
+        <h2 class="mega small reveal">Let's make<br />a game.</h2>
         <a class="mail reveal" href={`mailto:${profile.email}`}>{profile.email}<i class="circ"><Icon name="arrow" /></i></a>
-        <footer class="foot">Built with Astro · Data from the GitHub API · <a href={user.html_url} target="_blank" rel="noopener">@{user.login}</a></footer>
+        <footer class="foot">Built with Astro · <a href={profile.github} target="_blank" rel="noopener">GitHub</a> · <a href={profile.engineerSite} target="_blank" rel="noopener">Software engineering portfolio</a></footer>
       </div>
     </section>
   </main>
@@ -245,8 +147,6 @@ const stats = [
   </div>
 
   <script>
-    import { ago, describe } from '../data/format';
-
     const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
     const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -342,72 +242,5 @@ const stats = [
       { threshold: 0.6 },
     );
     document.querySelectorAll('[data-count]').forEach((el) => countIO.observe(el));
-
-    // ---- Repository filter + sort ----
-    const q = $<HTMLInputElement>('q');
-    const lang = $<HTMLSelectElement>('lang');
-    const sort = $<HTMLSelectElement>('sort');
-    const list = $('repoList');
-    const empty = $('empty');
-    const rows = [...list.children] as HTMLElement[];
-    function apply() {
-      const term = q.value.trim().toLowerCase();
-      const by = sort.value;
-      rows.sort((a, b) =>
-        by === 'name'
-          ? a.dataset.name!.localeCompare(b.dataset.name!)
-          : by === 'stars'
-            ? +b.dataset.stars! - +a.dataset.stars!
-            : +b.dataset.updated! - +a.dataset.updated!,
-      );
-      let shown = 0;
-      for (const r of rows) {
-        const ok = (!term || r.dataset.name!.includes(term)) && (!lang.value || r.dataset.lang === lang.value);
-        r.hidden = !ok;
-        if (ok) shown++;
-        list.appendChild(r);
-      }
-      empty.hidden = shown > 0;
-    }
-    [q, lang, sort].forEach((el) => el.addEventListener('input', apply));
-
-    // ---- Live activity feed (build-time snapshot is the fallback) ----
-    (async () => {
-      const tl = $('timeline');
-      const tag = $('liveTag');
-      try {
-        const res = await fetch('https://api.github.com/users/Stephen-SMH/events/public?per_page=30');
-        if (!res.ok) throw new Error(String(res.status));
-        const events = await res.json();
-        const items = events.map((e: any) => ({ e, d: describe(e) })).filter((x: any) => x.d).slice(0, 15);
-        if (!items.length) return;
-        tl.replaceChildren(
-          ...items.map(({ e, d }: any) => {
-            const li = document.createElement('li');
-            const dot = Object.assign(document.createElement('span'), { className: 'dot' });
-            const body = document.createElement('div');
-            const p = document.createElement('p');
-            const a = document.createElement('a');
-            a.href = `https://github.com/${e.repo.name}`;
-            a.target = '_blank';
-            a.rel = 'noopener';
-            a.textContent = e.repo.name.split('/')[1];
-            p.append(`${d.verb} `, a);
-            body.append(p);
-            if (d.detail) {
-              const small = document.createElement('small');
-              small.textContent = d.detail;
-              body.append(small);
-            }
-            const time = Object.assign(document.createElement('time'), { className: 'muted', textContent: ago(e.created_at) });
-            li.append(dot, body, time);
-            return li;
-          }),
-        );
-        tag.textContent = 'Live';
-      } catch {
-        /* keep snapshot */
-      }
-    })();
   </script>
 </Base>
