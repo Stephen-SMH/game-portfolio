@@ -1,0 +1,25 @@
+---
+const { count } = Astro.props;
+const tabs = [
+  ['overview', 'Overview'],
+  ['repositories', 'Repositories'],
+  ['games', 'Games'],
+  ['activity', 'Activity'],
+];
+---
+<header class="nav-wrap">
+  <nav class="nav" aria-label="Primary">
+    <a class="brand" href="#overview"><i></i><span>stephen</span></a>
+    <div class="tabs">
+      {tabs.map(([id, label]) => (
+        <a href={`#${id}`} data-tab={id}>{label}{id === 'repositories' && <b>{count}</b>}</a>
+      ))}
+    </div>
+    <button class="burger" id="burger" aria-label="Menu" aria-expanded="false"><span></span><span></span></button>
+  </nav>
+</header>
+<div class="sheet" id="sheet" aria-hidden="true">
+  {tabs.map(([id, label], i) => (
+    <a href={`#${id}`} data-tab={id} style={`--i:${i}`}>{label}</a>
+  ))}
+</div>

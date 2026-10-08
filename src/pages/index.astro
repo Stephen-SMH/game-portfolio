@@ -1,0 +1,270 @@
+---
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import Profile from '../components/Profile.astro';
+import Icon from '../components/Icon.astro';
+import { games } from '../data/games';
+import { getData, colorOf, ago, describe } from '../data/github';
+
+const { user, repos: all, events, contrib } = await getData();
+const repos = all.filter((r) => !r.fork);
+
+const langCount = new Map<string, number>();
+for (const r of repos) if (r.language) langCount.set(r.language, (langCount.get(r.language) ?? 0) + 1);
+const langs = [...langCount.entries()].sort((a, b) => b[1] - a[1]);
+const stars = repos.reduce((n, r) => n + r.stargazers_count, 0);
+const pins = repos.filter((r) => r.description).slice(0, 6);
+
+// Heatmap: columns are weeks (Sun to Sat), padded at the start.
+const pad = contrib.days.length ? new Date(contrib.days[0].date + 'T00:00:00Z').getUTCDay() : 0;
+const cells = [...Array(pad).fill(null), ...contrib.days];
+
+const feed = events
+  .map((e) => ({ e, d: describe(e) }))
+  .filter((x) => x.d)
+  .slice(0, 15);
+
+const fmt = (iso: string) =>
+  new Date(iso).toLocaleDateString('en', { month: 'short', day: 'numeric', year: 'numeric' });
+---
+<Base
+  title="Stephen — Portfolio"
+  description="Software engineer and game developer. Projects, games and activity, straight from GitHub."
+>
+  <Nav count={repos.length} />
+
+  <main class="shell">
+    <Profile user={user} langs={langs} />
+
+    <section class="content">
+      <!-- OVERVIEW -->
+      <div class="panel" data-panel="overview">
+        <div class="hero reveal">
+          <span class="eyebrow">Portfolio · Synced with GitHub</span>
+          <h2>I build games, apps and the tools behind them.</h2>
+          <p>A living index of everything I've shipped. Repositories, stars and activity are pulled from GitHub on every build.</p>
+          <div class="hero-cta">
+            <a class="btn" href="#games"><span>Play my games</span><i class="circ"><Icon name="arrow" /></i></a>
+            <a class="btn ghost" href="#repositories"><span>Browse repositories</span><i class="circ"><Icon name="arrow" /></i></a>
+          </div>
+        </div>
+
+        <div class="bento">
+          <article class="bezel s8 reveal"><div class="core">
+            <div class="card-head"><h3>Featured games</h3><a href="#games" class="link">All games</a></div>
+            <ul class="feature-list">
+              {games.slice(0, 3).map((g) => (
+                <li>
+                  <div>
+                    <strong>{g.title}</strong>
+                    <span>{g.genre}</span>
+                  </div>
+                  <div class="tags">{g.tech.slice(0, 3).map((t) => <em>{t}</em>)}</div>
+                  <a class="go" href={g.play ?? g.repo} target="_blank" rel="noopener" aria-label={`Open ${g.title}`}>
+                    <i class="circ"><Icon name={g.play ? 'play' : 'code'} /></i>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div></article>
+
+          <article class="bezel s4 reveal"><div class="core stats">
+            <h3>At a glance</h3>
+            <div class="stat"><b>{repos.length}</b><span>public repositories</span></div>
+            <div class="stat"><b>{stars}</b><span>stars earned</span></div>
+            <div class="stat"><b>{langs.length}</b><span>languages used</span></div>
+          </div></article>
+
+          <article class="bezel s12 reveal"><div class="core">
+            <div class="card-head"><h3>Recently active</h3><span class="muted">Latest pushes</span></div>
+            <div class="pins">
+              {pins.map((r) => (
+                <a class="pin" href={r.html_url} target="_blank" rel="noopener">
+                  <strong>{r.name}</strong>
+                  <p>{r.description}</p>
+                  <div class="row">
+                    {r.language && <span><i style={`background:${colorOf(r.language)}`}></i>{r.language}</span>}
+                    {r.stargazers_count > 0 && <span><Icon name="star" />{r.stargazers_count}</span>}
+                    <span class="muted">{ago(r.pushed_at)}</span>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div></article>
+
+          {contrib.days.length > 0 && (
+            <article class="bezel s12 reveal"><div class="core">
+              <div class="card-head"><h3>Contributions</h3><span class="muted">{contrib.total} in the last year</span></div>
+              <div class="heat-scroll">
+                <div class="heat">
+                  {cells.map((d) => d ? <i class={`l${d.level}`} title={`${d.count} on ${fmt(d.date)}`}></i> : <i class="gap"></i>)}
+                </div>
+              </div>
+              <div class="legend"><span>Less</span><i class="l0"></i><i class="l1"></i><i class="l2"></i><i class="l3"></i><i class="l4"></i><span>More</span></div>
+            </div></article>
+          )}
+        </div>
+      </div>
+
+      <!-- REPOSITORIES -->
+      <div class="panel" data-panel="repositories" hidden>
+        <div class="toolbar reveal">
+          <label class="search">
+            <Icon name="search" />
+            <input id="q" type="search" placeholder="Find a repository…" autocomplete="off" />
+          </label>
+          <select id="lang" aria-label="Language">
+            <option value="">All languages</option>
+            {langs.map(([l]) => <option value={l}>{l}</option>)}
+          </select>
+          <select id="sort" aria-label="Sort">
+            <option value="updated">Last updated</option>
+            <option value="stars">Stars</option>
+            <option value="name">Name</option>
+          </select>
+        </div>
+        <div class="bezel reveal"><div class="core flush">
+          <ul class="repo-list" id="repoList">
+            {repos.map((r) => (
+              <li data-name={r.name.toLowerCase()} data-lang={r.language ?? ''} data-stars={r.stargazers_count} data-updated={+new Date(r.pushed_at)}>
+                <div class="repo-main">
+                  <a href={r.html_url} target="_blank" rel="noopener">{r.name}</a>
+                  {r.description && <p>{r.description}</p>}
+                  <div class="row">
+                    {r.language && <span><i style={`background:${colorOf(r.language)}`}></i>{r.language}</span>}
+                    {r.stargazers_count > 0 && <span><Icon name="star" />{r.stargazers_count}</span>}
+                    {r.forks_count > 0 && <span><Icon name="fork" />{r.forks_count}</span>}
+                    <span class="muted">Updated {fmt(r.pushed_at)}</span>
+                  </div>
+                </div>
+                {r.homepage && <a class="live" href={r.homepage} target="_blank" rel="noopener">Live <Icon name="arrow" /></a>}
+              </li>
+            ))}
+          </ul>
+          <p class="empty" id="empty" hidden>No repositories match.</p>
+        </div></div>
+      </div>
+
+      <!-- GAMES -->
+      <div class="panel" data-panel="games" hidden>
+        <div class="hero small reveal">
+          <span class="eyebrow">Games</span>
+          <h2>Things you can actually play.</h2>
+        </div>
+        <div class="bento">
+          {games.map((g) => (
+            <article class={`bezel s${g.span} reveal`}><div class="core game">
+              <span class="eyebrow">{g.genre}</span>
+              <h3>{g.title}</h3>
+              <p>{g.blurb}</p>
+              <div class="tags">{g.tech.map((t) => <em>{t}</em>)}</div>
+              <div class="hero-cta">
+                {g.play && <a class="btn" href={g.play} target="_blank" rel="noopener"><span>Play now</span><i class="circ"><Icon name="arrow" /></i></a>}
+                <a class="btn ghost" href={g.repo} target="_blank" rel="noopener"><span>Source</span><i class="circ"><Icon name="arrow" /></i></a>
+              </div>
+            </div></article>
+          ))}
+        </div>
+      </div>
+
+      <!-- ACTIVITY -->
+      <div class="panel" data-panel="activity" hidden>
+        <div class="hero small reveal">
+          <span class="eyebrow">Activity</span>
+          <h2>What I've been up to.</h2>
+        </div>
+        <div class="bezel reveal"><div class="core">
+          {feed.length === 0 ? <p class="empty">No recent public activity.</p> : (
+            <ol class="timeline">
+              {feed.map(({ e, d }) => (
+                <li>
+                  <span class="dot"></span>
+                  <div>
+                    <p>{d!.verb} <a href={`https://github.com/${e.repo.name}`} target="_blank" rel="noopener">{e.repo.name.split('/')[1]}</a></p>
+                    {d!.detail && <small>{d!.detail}</small>}
+                  </div>
+                  <time class="muted">{ago(e.created_at)}</time>
+                </li>
+              ))}
+            </ol>
+          )}
+        </div></div>
+      </div>
+
+      <footer class="foot">Built with Astro · Data from the GitHub API · <a href={user.html_url} target="_blank" rel="noopener">@{user.login}</a></footer>
+    </section>
+  </main>
+
+  <script>
+    const panels = [...document.querySelectorAll<HTMLElement>('[data-panel]')];
+    const links = [...document.querySelectorAll<HTMLElement>('[data-tab]')];
+    const sheet = document.getElementById('sheet')!;
+    const burger = document.getElementById('burger')!;
+
+    function setMenu(open: boolean) {
+      sheet.classList.toggle('open', open);
+      burger.classList.toggle('open', open);
+      burger.setAttribute('aria-expanded', String(open));
+      sheet.setAttribute('aria-hidden', String(!open));
+      document.body.classList.toggle('lock', open);
+    }
+    burger.addEventListener('click', () => setMenu(!sheet.classList.contains('open')));
+
+    function route() {
+      const id = location.hash.slice(1);
+      const tab = panels.some((p) => p.dataset.panel === id) ? id : 'overview';
+      panels.forEach((p) => (p.hidden = p.dataset.panel !== tab));
+      links.forEach((l) => l.classList.toggle('active', l.dataset.tab === tab));
+      setMenu(false);
+      window.scrollTo({ top: 0 });
+    }
+    addEventListener('hashchange', route);
+    route();
+
+    // Scroll reveals
+    const io = new IntersectionObserver(
+      (entries) =>
+        entries.forEach((en) => {
+          if (en.isIntersecting) {
+            en.target.classList.add('in');
+            io.unobserve(en.target);
+          }
+        }),
+      { threshold: 0.12 },
+    );
+    document.querySelectorAll('.reveal').forEach((el, i) => {
+      (el as HTMLElement).style.setProperty('--d', `${(i % 4) * 70}ms`);
+      io.observe(el);
+    });
+
+    // Repository filter + sort
+    const q = document.getElementById('q') as HTMLInputElement;
+    const lang = document.getElementById('lang') as HTMLSelectElement;
+    const sort = document.getElementById('sort') as HTMLSelectElement;
+    const list = document.getElementById('repoList')!;
+    const empty = document.getElementById('empty')!;
+    const rows = [...list.children] as HTMLElement[];
+
+    function apply() {
+      const term = q.value.trim().toLowerCase();
+      const by = sort.value;
+      rows.sort((a, b) =>
+        by === 'name'
+          ? a.dataset.name!.localeCompare(b.dataset.name!)
+          : by === 'stars'
+            ? +b.dataset.stars! - +a.dataset.stars!
+            : +b.dataset.updated! - +a.dataset.updated!,
+      );
+      let shown = 0;
+      for (const r of rows) {
+        const ok =
+          (!term || r.dataset.name!.includes(term)) && (!lang.value || r.dataset.lang === lang.value);
+        r.hidden = !ok;
+        if (ok) shown++;
+        list.appendChild(r);
+      }
+      empty.hidden = shown > 0;
+    }
+    [q, lang, sort].forEach((el) => el.addEventListener('input', apply));
+  </script>
+</Base>

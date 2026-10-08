@@ -1,0 +1,29 @@
+---
+import Icon from './Icon.astro';
+import { colorOf } from '../data/github';
+const { user, langs } = Astro.props;
+---
+<aside class="profile">
+  <div class="bezel"><div class="core">
+    <img class="avatar" src={user.avatar_url} alt={user.name ?? user.login} width="240" height="240" />
+    <h1>{user.name ?? user.login}</h1>
+    <p class="handle">{user.login}</p>
+    <p class="bio">{user.bio ?? 'Software engineer. I build games, apps and the tools behind them.'}</p>
+    <a class="btn" href={user.html_url} target="_blank" rel="noopener">
+      <span>View on GitHub</span><i class="circ"><Icon name="arrow" /></i>
+    </a>
+    <ul class="meta">
+      <li><Icon name="people" /><span><b>{user.followers}</b> followers · <b>{user.following}</b> following</span></li>
+      {user.location && <li><Icon name="pin" /><span>{user.location}</span></li>}
+      <li><Icon name="mail" /><a href="mailto:soemoehtetstephen@gmail.com">soemoehtetstephen@gmail.com</a></li>
+      <li><Icon name="globe" /><a href="https://stephen-smh.github.io" target="_blank" rel="noopener">stephen-smh.github.io</a></li>
+    </ul>
+    <div class="rule"></div>
+    <h2 class="mini">Top languages</h2>
+    <div class="chips">
+      {langs.slice(0, 6).map(([l, n]) => (
+        <span class="chip"><i style={`background:${colorOf(l)}`}></i>{l}<em>{n}</em></span>
+      ))}
+    </div>
+  </div></div>
+</aside>
