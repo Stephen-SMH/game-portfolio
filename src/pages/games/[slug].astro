@@ -1,0 +1,168 @@
+---
+import { readdirSync, existsSync } from 'node:fs';
+import { join } from 'node:path';
+import Base from '../../layouts/Base.astro';
+import Icon from '../../components/Icon.astro';
+import { games } from '../../data/games';
+import { profile } from '../../data/profile';
+import { store } from '../../data/store';
+
+export function getStaticPaths() {
+  return store.map((s) => ({ params: { slug: s.slug } }));
+}
+
+const { slug } = Astro.params;
+const s = store.find((x) => x.slug === slug)!;
+const g = games.find((x) => x.title === s.title)!;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+// Real screenshots dropped in public/shots/<slug>/ (plus the game's own `shot`), else key-art slides.
+const dir = join(process.cwd(), 'public', 'shots', s.slug);
+const found = existsSync(dir) ? readdirSync(dir).filter((f) => /\.(png|jpe?g|webp)$/i.test(f)).sort() : [];
+const shots: { src: string; alt: string; tall?: boolean }[] = [
+  ...(g.shot ? [{ src: `${base}/${g.shot}`, alt: `${g.title} screenshot`, tall: true }] : []),
+  ...found.map((f, i) => ({ src: `${base}/shots/${s.slug}/${f}`, alt: `${g.title} screenshot ${i + 1}` })),
+];
+const art = g.points.slice(0, 4);
+const slides = shots.length ? shots : art.map((p) => ({ src: '', alt: p }));
+const others = games.filter((x) => x.title !== s.title);
+const slugOf = (title: string) => store.find((x) => x.title === title)?.slug;
+const cta = g.play ?? g.repo;
+---
+<Base title={`${s.title} on ${profile.first}'s Game Store`} description={s.short}>
+  <header class="st-top">
+    <div class="wrap st-top-in">
+      <a class="st-back" href={`${base}/#games`}><Icon name="arrow" /> <span>All games</span></a>
+      <nav class="st-crumb" aria-label="Breadcrumb"><a href={`${base}/`}>Store</a><i>›</i><a href={`${base}/#games`}>Games</a><i>›</i><b>{s.title}</b></nav>
+      <a class="st-me" href={profile.github} target="_blank" rel="noopener"><img src={profile.avatar} alt="" width="28" height="28" />{profile.first}</a>
+    </div>
+  </header>
+
+  <main class="st wrap" style={`--from:${g.from};--to:${g.to}`}>
+    <h1 class="st-title">{s.title}</h1>
+
+    <div class="st-grid">
+      <section class="st-media" aria-label="Screenshots">
+        <div class="st-stage" id="stage">
+          {slides.map((sl, i) => (
+            <figure class={`st-slide${i === 0 ? ' on' : ''}${sl.src ? '' : ' art'}`} data-i={i}>
+              {sl.src
+                ? <img src={sl.src} alt={sl.alt} loading={i ? 'lazy' : 'eager'} class={shots[i]?.tall ? 'tall' : ''} />
+                : <div class="st-art"><span class="st-art-t">{s.title}</span><p>{sl.alt}</p></div>}
+            </figure>
+          ))}
+          {slides.length > 1 && (<>
+            <button class="st-nav prev" id="prev" aria-label="Previous screenshot">‹</button>
+            <button class="st-nav next" id="next" aria-label="Next screenshot">›</button>
+          </>)}
+        </div>
+        {slides.length > 1 && (
+          <div class="st-thumbs" role="tablist">
+            {slides.map((sl, i) => (
+              <button class={`st-thumb${i === 0 ? ' on' : ''}`} data-i={i} role="tab" aria-label={`Screenshot ${i + 1}`}>
+                {sl.src ? <img src={sl.src} alt="" width="120" height="68" loading="lazy" /> : <span>{i + 1}</span>}
+              </button>
+            ))}
+          </div>
+        )}
+        {!shots.length && <p class="st-note">Key art preview. Real screenshots appear here as soon as they are added to <code>public/shots/{s.slug}/</code>.</p>}
+      </section>
+
+      <aside class="st-side">
+        <div class="st-capsule"><div class="poster" style={`--from:${g.from};--to:${g.to}`}><h3>{g.headline}</h3><div class="ghost-type" aria-hidden="true">{s.title}</div></div></div>
+        <p class="st-short">{s.short}</p>
+        <dl class="st-info">
+          <div><dt>Status</dt><dd><span class="st-badge">{s.status}</span></dd></div>
+          {s.version && <div><dt>Version</dt><dd>{s.version}</dd></div>}
+          <div><dt>Released</dt><dd>{s.released}</dd></div>
+          <div><dt>Last update</dt><dd>{s.updated}</dd></div>
+          <div><dt>Developer</dt><dd><a href={profile.github} target="_blank" rel="noopener">{profile.first}</a></dd></div>
+          <div><dt>Made for</dt><dd>{s.context}</dd></div>
+        </dl>
+        <div class="st-tags">{s.genres.map((t) => <span>{t}</span>)}</div>
+      </aside>
+    </div>
+
+    <section class="st-buy" aria-label="Play">
+      <div>
+        <h2>{g.play ? `Play ${s.title}` : `Get ${s.title}`}</h2>
+        <p>{g.play ? 'Runs right in your browser. No install, no account.' : 'Source code and instructions are on GitHub.'}</p>
+      </div>
+      <div class="st-buy-r">
+        <span class="st-price"><small>Price</small>Free</span>
+        <a class="st-play" href={cta} target="_blank" rel="noopener">{g.play ? '▶ Play now' : 'View on GitHub'}</a>
+        <a class="st-alt" href={g.repo} target="_blank" rel="noopener"><Icon name="code" /> Source</a>
+      </div>
+    </section>
+
+    <div class="st-cols">
+      <section class="st-main">
+        <h2 class="st-h">About this game</h2>
+        <p class="st-desc">{g.blurb}</p>
+        <ul class="st-feats">
+          {g.points.map((p) => <li>{p}</li>)}
+        </ul>
+
+        <h2 class="st-h">Update history</h2>
+        <ol class="st-log">
+          {s.patchNotes.map((n) => (
+            <li>
+              <div class="st-log-h"><b>{n.version}</b><time>{n.date}</time></div>
+              <h3>{n.title}</h3>
+              <p>{n.body}</p>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <aside class="st-specs">
+        <h2 class="st-h">System requirements</h2>
+        <div class="st-req">
+          <h3>Minimum · {s.requirements.label}</h3>
+          <ul>{s.requirements.min.map((r) => <li>{r}</li>)}</ul>
+        </div>
+        {s.requirements.rec && (
+          <div class="st-req">
+            <h3>Recommended</h3>
+            <ul>{s.requirements.rec.map((r) => <li>{r}</li>)}</ul>
+          </div>
+        )}
+        <div class="st-req">
+          <h3>Details</h3>
+          <ul>
+            <li><b>Players:</b> {s.players}</li>
+            <li><b>Platforms:</b> {s.platforms.join(', ')}</li>
+            <li><b>Languages:</b> {s.languages}</li>
+            <li><b>Built with:</b> {g.tech.join(', ')}</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+
+    <h2 class="st-h">More games</h2>
+    <div class="st-more">
+      {others.map((o) => (
+        <a class="st-card" href={`${base}/games/${slugOf(o.title)}/`} style={`--from:${o.from};--to:${o.to}`}>
+          <div class="st-card-art"><span>{o.title}</span></div>
+          <div class="st-card-b"><b>{o.title}</b><small>{o.genre}</small><span class="st-free">Free</span></div>
+        </a>
+      ))}
+    </div>
+    <footer class="foot">Built with Astro · <a href={profile.github} target="_blank" rel="noopener">GitHub</a> · <a href={`${base}/`}>Back to portfolio</a></footer>
+  </main>
+
+  <script>
+    const slides = [...document.querySelectorAll<HTMLElement>('.st-slide')];
+    const thumbs = [...document.querySelectorAll<HTMLElement>('.st-thumb')];
+    let cur = 0;
+    const go = (i: number) => {
+      cur = (i + slides.length) % slides.length;
+      slides.forEach((s, k) => s.classList.toggle('on', k === cur));
+      thumbs.forEach((t, k) => t.classList.toggle('on', k === cur));
+    };
+    document.getElementById('prev')?.addEventListener('click', () => go(cur - 1));
+    document.getElementById('next')?.addEventListener('click', () => go(cur + 1));
+    thumbs.forEach((t, i) => t.addEventListener('click', () => go(i)));
+    addEventListener('keydown', (e) => { if (e.key === 'ArrowLeft') go(cur - 1); if (e.key === 'ArrowRight') go(cur + 1); });
+  </script>
+</Base>
