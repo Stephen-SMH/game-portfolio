@@ -1,0 +1,12 @@
+---
+const code = import.meta.env.PUBLIC_GOATCOUNTER_CODE?.trim();
+const configured = Boolean(code && /^[a-z0-9-]+$/i.test(code));
+---
+{configured && (
+  <script
+    is:inline
+    async
+    data-goatcounter={`https://${code}.goatcounter.com/count`}
+    src="https://gc.zgo.at/count.js"
+  />
+)}

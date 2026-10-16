@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import Analytics from '../components/Analytics.astro';
 const { title, description } = Astro.props;
 ---
 <!doctype html>
@@ -15,6 +16,7 @@ const { title, description } = Astro.props;
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
     <script is:inline>document.documentElement.classList.add('js');</script>
+    <Analytics />
   </head>
   <body>
     <div class="orbs" aria-hidden="true"><i></i><i></i></div>
