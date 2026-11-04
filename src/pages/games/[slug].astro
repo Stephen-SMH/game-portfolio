@@ -92,17 +92,30 @@ const audio = (file: string) => `${base}/audio/${s.slug}/${file}.mp3`;
       </aside>
     </div>
 
-    <section class="st-buy" aria-label="Play">
-      <div>
-        <h2>{g.play ? `Play ${s.title}` : `Get ${s.title}`}</h2>
-        <p>{g.play ? 'Runs right in your browser. No install, no account.' : 'Source code and instructions are on GitHub.'}</p>
-      </div>
-      <div class="st-buy-r">
-        <span class="st-price"><small>Price</small>Free</span>
-        <a class="st-play" href={cta} target="_blank" rel="noopener">{g.play ? '▶ Play now' : 'View on GitHub'}</a>
-        <a class="st-alt" href={g.repo} target="_blank" rel="noopener"><Icon name="code" /> Source</a>
-      </div>
-    </section>
+    {g.dev ? (
+      <section class="st-buy dev" aria-label="Release">
+        <div>
+          <h2>{s.title} is in development</h2>
+          <p>{g.dev}. {g.repo ? 'Follow along on GitHub.' : 'The screenshots are from the current build.'}</p>
+        </div>
+        <div class="st-buy-r">
+          <span class="st-price"><small>Release</small>Coming soon</span>
+          {g.repo && <a class="st-play" href={g.repo} target="_blank" rel="noopener">View on GitHub</a>}
+        </div>
+      </section>
+    ) : (
+      <section class="st-buy" aria-label="Play">
+        <div>
+          <h2>{g.play ? `Play ${s.title}` : `Get ${s.title}`}</h2>
+          <p>{g.play ? 'Runs right in your browser. No install, no account.' : 'Source code and instructions are on GitHub.'}</p>
+        </div>
+        <div class="st-buy-r">
+          <span class="st-price"><small>Price</small>Free</span>
+          {cta && <a class="st-play" href={cta} target="_blank" rel="noopener">{g.play ? '▶ Play now' : 'View on GitHub'}</a>}
+          {g.repo && <a class="st-alt" href={g.repo} target="_blank" rel="noopener"><Icon name="code" /> Source</a>}
+        </div>
+      </section>
+    )}
 
     {s.facts && (
       <section class="st-facts" aria-label="At a glance">
@@ -118,6 +131,13 @@ const audio = (file: string) => `${base}/audio/${s.slug}/${file}.mp3`;
           {g.points.map((p) => <li>{p}</li>)}
         </ul>
         {s.inspiredBy && <p class="st-inspired">{s.inspiredBy}</p>}
+
+        {s.roadmap && (<>
+          <h2 class="st-h">What's next</h2>
+          <ul class="st-feats st-next">
+            {s.roadmap.map((r) => <li>{r}</li>)}
+          </ul>
+        </>)}
 
         <h2 class="st-h">Update history</h2>
         <ol class="st-log">
@@ -159,7 +179,7 @@ const audio = (file: string) => `${base}/audio/${s.slug}/${file}.mp3`;
       <section class="st-hood" aria-labelledby="hood">
         <div class="st-hood-head">
           <h2 class="st-h" id="hood">Under the hood</h2>
-          <p>How it is built, for anyone reviewing the engineering. The code, the tests and the build pipeline are all in the <a href={g.repo} target="_blank" rel="noopener">repository</a>.</p>
+          <p>How it is built, for anyone reviewing the engineering.{g.repo && <> The code, the tests and the build pipeline are all in the <a href={g.repo} target="_blank" rel="noopener">repository</a>.</>}</p>
         </div>
         <div class="st-hood-grid">
           {s.highlights.map((h, i) => (
@@ -224,7 +244,7 @@ const audio = (file: string) => `${base}/audio/${s.slug}/${file}.mp3`;
           <table class="st-table">
             <thead><tr><th>What</th><th>By</th><th>Licence</th></tr></thead>
             <tbody>
-              <tr><td><b>Design, code, AI, tools and maps</b></td><td><a href={profile.github} target="_blank" rel="noopener">{profile.first}</a></td><td class="st-dim">Source on GitHub</td></tr>
+              <tr><td><b>{s.creditsLead ?? 'Design and code'}</b></td><td><a href={profile.github} target="_blank" rel="noopener">{profile.first}</a></td><td class="st-dim">{g.repo ? 'Source on GitHub' : 'Original work'}</td></tr>
               {s.credits.map((c) => (
                 <tr><td><b>{c.what}</b></td><td>{c.url ? <a href={c.url} target="_blank" rel="noopener">{c.who}</a> : c.who}</td><td class="st-dim">{c.licence}</td></tr>
               ))}
@@ -238,8 +258,11 @@ const audio = (file: string) => `${base}/audio/${s.slug}/${file}.mp3`;
     <div class="st-more">
       {others.map((o) => (
         <a class="st-card" href={`${base}/games/${slugOf(o.title)}/`} style={`--from:${o.from};--to:${o.to}`}>
-          <div class="st-card-art"><span>{o.title}</span></div>
-          <div class="st-card-b"><b>{o.title}</b><small>{o.genre}</small><span class="st-free">Free</span></div>
+          <div class={`st-card-art${o.cover ? ' has-cover' : ''}`}>
+            {o.cover && <img src={`${base}/${o.cover}`} alt="" loading="lazy" width="1280" height="720" />}
+            <span>{o.title}</span>
+          </div>
+          <div class="st-card-b"><b>{o.title}</b><small>{o.genre}</small>{o.dev ? <span class="st-free dev">In dev</span> : <span class="st-free">Free</span>}</div>
         </a>
       ))}
     </div>

@@ -1,7 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
-import { games } from '../data/games';
+import { games, released, inDev } from '../data/games';
 import { profile } from '../data/profile';
 import { store } from '../data/store';
 
@@ -9,11 +9,12 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const tech = [...new Set(games.flatMap((g) => g.tech))];
 const sections = ['intro', 'about', 'games', 'toolkit', 'contact'];
 const words = profile.statement.split(' ');
+const slugOf = (title: string) => store.find((x) => x.title === title)?.slug;
 const stats = [
-  [games.length, 'games built'],
+  [released.length, 'games shipped'],
+  [inDev.length, 'in development'],
   [games.filter((g) => g.play).length, 'playable online'],
   [profile.jams, 'game jam'],
-  [tech.length, 'technologies used'],
 ];
 ---
 <Base
@@ -92,7 +93,7 @@ const stats = [
         <h2 class="h2 reveal">Things you can actually play.</h2>
       </div>
 
-      {games.map((g, i) => (
+      {released.map((g, i) => (
         <article class={`showcase wrap${i % 2 ? ' flip' : ''}`}>
           <div class="poster-col">
             <div class="frame poster-frame">
@@ -129,6 +130,31 @@ const stats = [
           </div>
         </article>
       ))}
+    </section>
+
+    <!-- IN DEVELOPMENT -->
+    <section class="dev-section" id="in-development" aria-labelledby="dev-h">
+      <div class="wrap">
+        <span class="eyebrow">In development</span>
+        <h2 class="h2 reveal" id="dev-h">What I'm building next.</h2>
+        <p class="dev-lede reveal">Work in progress, shown as it stands. Each one has a store page with screenshots from the current build, what works today and what comes next.</p>
+        <div class="dev-grid">
+          {inDev.map((g, i) => (
+            <a class="dev-card reveal" href={`${base}/games/${slugOf(g.title)}/`} style={`--from:${g.from};--to:${g.to};--d:${i * 70}ms`}>
+              <div class="dev-art">
+                {g.cover && <img src={`${base}/${g.cover}`} alt={`${g.title} screenshot`} loading="lazy" width="1280" height="720" />}
+                <span class="dev-badge"><i></i>In development</span>
+              </div>
+              <div class="dev-body">
+                <div class="dev-top"><h3>{g.title}</h3><span class="dev-genre">{g.genre}</span></div>
+                <p class="dev-blurb">{g.blurb}</p>
+                <p class="dev-progress">{g.dev}</p>
+                <div class="dev-tech">{g.tech.map((t) => <span>{t}</span>)}</div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
     </section>
 
     <!-- CONTACT -->

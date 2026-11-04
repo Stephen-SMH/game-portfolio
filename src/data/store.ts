@@ -28,6 +28,10 @@ export interface Store {
   highlights?: Highlight[];
   soundtrack?: { note: string; licence: string; tracks: Track[]; sounds?: Sound[]; soundsNote?: string };
   credits?: Credit[];
+  /** First row of the credits table: what Stephen did. Defaults to "Design and code". */
+  creditsLead?: string;
+  /** What's planned next; shown on in-development games. */
+  roadmap?: string[];
 }
 
 export const store: Store[] = [
@@ -122,6 +126,7 @@ export const store: Store[] = [
         { name: 'Army destroyed', when: 'An army is wiped out', source: 'Kenney, Impact Sounds and RPG Audio' },
       ],
     },
+    creditsLead: 'Design, code, AI, tools and maps',
     credits: [
       { what: 'Unit figures (rendered from 3D models)', who: 'Quaternius', licence: 'CC0', url: 'https://quaternius.com' },
       { what: 'Icons and Forge card shapes', who: 'Lorc, Delapouite, Guard13007, Cathelineau, Skoll, HeavenlyDog (game-icons.net)', licence: 'CC BY 3.0', url: 'https://game-icons.net' },
@@ -229,6 +234,164 @@ export const store: Store[] = [
     },
     patchNotes: [
       { version: '1.0', date: 'Nov 23, 2023', title: 'Published', body: 'Collision checks and game loop in assembly, with a demo recording.' },
+    ],
+  },
+
+  // ---------- In development ----------
+  {
+    slug: 'mafia-don',
+    title: 'Mafia Don',
+    short: "Turn-based strategy from the Don's chair. Pick one of five crime families in 1946 New York, send your capos across the city, take the rackets, survive the police and win the year's title.",
+    status: 'In development',
+    version: 'v1 build',
+    released: 'Not yet released',
+    updated: 'Nov 3, 2026',
+    genres: ['Strategy', 'Turn-based', 'Management', 'Crime'],
+    platforms: ['macOS, Windows, Linux', 'Web and mobile planned'],
+    players: 'Single player · five families to choose from',
+    languages: 'English',
+    context: 'Solo project',
+    requirements: {
+      label: 'Desktop',
+      min: ['Mouse and keyboard, or a trackpad (pinch to zoom)', "A GPU that runs Godot 4's Compatibility renderer"],
+    },
+    facts: [['42', 'Districts'], ['5', 'Families'], ['16', 'Crossings in 1946'], ['25', 'Years simulated in tests']],
+    roadmap: [
+      'Sound and music: a noir jazz loop, typewriter and paper sounds.',
+      'Turn playback on the map: crews marching and fights flashing before the newspaper.',
+      'Events of the era, fictionalised, and deeper diplomacy: Commission votes, sit-downs and alliances.',
+      'Sons and nephews as heirs, so succession becomes a choice.',
+      'Fog of war over rivals, with informants to lift it.',
+      'Web and mobile builds, like Medieval Conquest.',
+    ],
+    patchNotes: [
+      { version: 'v1', date: 'Nov 3, 2026', title: 'Version 1 playable', body: 'The map of 42 districts, five families with histories, monthly turns, the newspaper and family report, the Commission, hits, peace offers and yearly titles.' },
+    ],
+    credits: [
+      { what: 'Limelight, Playfair Display and Oswald fonts', who: 'Sorkin Type Co and the Playfair Display and Oswald authors', licence: 'SIL Open Font License 1.1' },
+      { what: 'Special Elite font', who: 'Astigmatic', licence: 'Apache License 2.0' },
+    ],
+  },
+  {
+    slug: 'mafia',
+    title: 'Mafia',
+    short: 'A 1940s crime story in 3D. Rise from nobody to a made man on one street in Little Italy: lean on shopkeepers, build a crew and fight off a rival family.',
+    status: 'In development',
+    version: '0.2',
+    released: 'Not yet released',
+    updated: 'Nov 1, 2026',
+    genres: ['Story', 'Action', 'Crime', '1940s'],
+    platforms: ['macOS, Windows, Linux'],
+    players: 'Single player',
+    languages: 'English',
+    context: 'Solo project',
+    requirements: {
+      label: 'Desktop',
+      min: ['Mouse and keyboard', "A GPU that runs Godot 4's Mobile renderer"],
+      rec: ['Runs at 60 fps on an M2 Mac'],
+    },
+    facts: [['6', 'Story steps in Chapter One'], ['3', 'Shops to lean on'], ['6', 'Ranks, Outsider to Don'], ['3', 'Men to hire']],
+    roadmap: [
+      'Chapter Two: rising to Capo.',
+      'More streets and interiors.',
+      '1940s cars and police heat.',
+      'Sound and music.',
+    ],
+    patchNotes: [
+      { version: '0.2', date: 'Nov 1, 2026', title: 'Story mode, Chapter One', body: 'Real models, cutscenes, a crew and ranks: six story steps from your first collection to the ceremony in the back room.' },
+      { version: '0.1', date: 'Oct 31, 2026', title: 'First playable', body: 'One city block and three shops to lean on.' },
+    ],
+    credits: [
+      { what: 'Street, buildings, people and props', who: 'Quaternius', licence: 'CC0', url: 'https://quaternius.com' },
+    ],
+  },
+  {
+    slug: 'tactics-rpg',
+    title: 'Tactics RPG',
+    short: 'A grid-based tactical RPG on 3D block maps with height. Two squads of four, speed-based turns, and a forecast for every attack before you commit.',
+    status: 'In development',
+    version: 'M4',
+    released: 'Not yet released',
+    updated: 'Nov 1, 2026',
+    genres: ['Tactical RPG', 'Turn-based', 'Strategy', 'Pixel art'],
+    platforms: ['macOS, Windows, Linux', 'Web (HTML5) planned'],
+    players: 'Single player · squads of four',
+    languages: 'English',
+    context: 'Solo project',
+    requirements: {
+      label: 'Desktop',
+      min: ['Mouse and keyboard', "A GPU that runs Godot 4's Compatibility renderer"],
+    },
+    inspiredBy: 'Inspired by the PS1-era tactics games: height, facing and jobs decide the fight. The units and maps are drawn in code.',
+    facts: [['4', 'Jobs'], ['4 v 4', 'Battles'], ['3', 'AI difficulty levels'], ['5', 'Test suites']],
+    roadmap: [
+      'A campaign shell: a world map, a town with a shop, three story battles, and saving.',
+      'All eight jobs and status effects.',
+      'Ten battles and a web build.',
+    ],
+    patchNotes: [
+      { version: 'M4', date: 'Nov 1, 2026', title: 'Enemy AI', body: 'Enemies score every move and action and pick the best, with a difficulty setting.' },
+      { version: 'M3', date: 'Nov 1, 2026', title: 'Jobs and inventory', body: 'Four jobs, job points and abilities, equipment, shared items and the party menu.' },
+      { version: 'M2', date: 'Nov 1, 2026', title: 'Combat', body: 'Turn order, move, act and wait, facing, the attack forecast, KO and results.' },
+      { version: 'M1', date: 'Nov 1, 2026', title: 'Grid prototype', body: 'A height map, the rotating camera and unit movement.' },
+    ],
+  },
+  {
+    slug: 'farm-life',
+    title: 'Farm Life',
+    short: 'A top-down pixel-art farming and life sim. Grow crops, ship your harvest and make friends in a small town across four seasons.',
+    status: 'In development',
+    version: 'M4',
+    released: 'Not yet released',
+    updated: 'Nov 1, 2026',
+    genres: ['Farming', 'Life sim', 'Pixel art', 'Relaxing'],
+    platforms: ['macOS, Windows, Linux', 'Web (HTML5) planned'],
+    players: 'Single player · three save slots',
+    languages: 'English',
+    context: 'Solo project',
+    requirements: {
+      label: 'Desktop',
+      min: ['Keyboard and mouse', "A GPU that runs Godot 4's Compatibility renderer"],
+    },
+    inspiredBy: 'Inspired by Stardew Valley. Every tile, crop and character is drawn in code.',
+    facts: [['4', 'Seasons'], ['28', 'Days a season'], ['8', 'Crops'], ['4', 'Townspeople']],
+    roadmap: [
+      'Animals and cooking: a coop and chickens, a kitchen with five recipes, foraging and fishing.',
+      'A first full year: eight townspeople, tool upgrades, crafting and a web build.',
+    ],
+    patchNotes: [
+      { version: 'M4', date: 'Nov 1, 2026', title: 'Town and townspeople', body: 'The town map, townspeople with daily schedules, dialogue, gifts and friendship.' },
+      { version: 'M3', date: 'Nov 1, 2026', title: 'Inventory and the store', body: 'The inventory screen, chests, the general store, seasons, weather and crop quality.' },
+      { version: 'M2', date: 'Nov 1, 2026', title: 'Crops and time', body: 'The clock, sleeping, crops, the shipping bin and save slots.' },
+      { version: 'M1', date: 'Nov 1, 2026', title: 'Walk and till', body: 'Walking, the hotbar, the hoe, the watering can and energy.' },
+    ],
+  },
+  {
+    slug: 'lantern',
+    title: 'Lantern',
+    short: 'A turn-based roguelike for the desktop. Eight floors down, the Sunstone waits. Your lantern is your light and your life, and it burns lower with every step.',
+    status: 'In development',
+    version: '0.1.0',
+    released: 'Not yet released',
+    updated: 'Oct 11, 2026',
+    genres: ['Roguelike', 'Turn-based', 'Dungeon crawler', 'Permadeath'],
+    platforms: ['macOS, Windows, Linux (desktop app, about 4 MB)'],
+    players: 'Single player · daily seeded runs',
+    languages: 'English',
+    context: 'Solo project',
+    requirements: {
+      label: 'Desktop',
+      min: ['Keyboard', 'For now, build from source: Node 20+, stable Rust and the Tauri prerequisites'],
+    },
+    facts: [['8', 'Floors'], ['13', 'Core unit tests'], ['200', 'Seeds balance-tested'], ['4 MB', 'App bundle']],
+    roadmap: [
+      'Ranged enemies, and an oil flask you can throw to set an area alight.',
+      'Generated vaults and secret doors.',
+      'A lantern hiss that changes with your oil level.',
+      'Signed builds for macOS, Windows and Linux from CI.',
+    ],
+    patchNotes: [
+      { version: '0.1.0', date: 'Oct 11, 2026', title: 'First build', body: 'Eight floors, the lantern and oil, five monster types and the Warden, loot, permadeath with autosave, a daily run and a local top-10 board.' },
     ],
   },
 ];

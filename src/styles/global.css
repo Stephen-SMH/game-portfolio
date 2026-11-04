@@ -320,3 +320,34 @@ h3 { font-size: 15px; font-weight: 500; }
 .st-sub { margin: 28px 0 12px; font-size: 17px; font-weight: 600; letter-spacing: -0.02em; }
 @media (max-width: 1100px) { .st-facts { grid-template-columns: repeat(3, minmax(0, 1fr)); } .st-hood-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 640px) { .st-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); } .st-hood-grid { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---------- In development (home section, store badges) ---------- */
+.dev-section { padding-top: clamp(56px, 8vw, 120px); }
+.dev-lede { margin-top: 20px; max-width: 60ch; font-size: clamp(17px, 1.6vw, 20px); line-height: 1.5; color: var(--dim); }
+.dev-grid { margin-top: clamp(32px, 4vw, 56px); display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 20px; }
+.dev-card { display: flex; flex-direction: column; border-radius: 24px; overflow: hidden; border: 1px solid var(--hair); background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02)); transition: border-color 0.3s; }
+.dev-card:hover { border-color: color-mix(in srgb, var(--from) 65%, white 15%); }
+.dev-art { position: relative; aspect-ratio: 16 / 9; overflow: hidden; background: radial-gradient(120% 90% at 20% 0%, var(--from), var(--to)); }
+.dev-art img { width: 100%; height: 100%; object-fit: cover; transition: transform 1s var(--ease); }
+.dev-card:hover .dev-art img { transform: scale(1.045); }
+.dev-badge { position: absolute; left: 12px; top: 12px; display: inline-flex; align-items: center; gap: 8px; padding: 5px 11px; border-radius: 999px; font: 500 11px var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: #fde68a; background: rgba(8, 10, 18, 0.8); border: 1px solid rgba(253, 230, 138, 0.25); backdrop-filter: blur(8px); }
+.dev-badge i { width: 7px; height: 7px; border-radius: 50%; background: #fbbf24; animation: dev-pulse 2s infinite; }
+@keyframes dev-pulse { 0% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.6); } 70%, 100% { box-shadow: 0 0 0 7px rgba(251, 191, 36, 0); } }
+.dev-body { flex: 1; display: grid; gap: 12px; align-content: start; padding: 18px 20px 20px; }
+.dev-top { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 12px; }
+.dev-top h3 { font-size: 24px; font-weight: 600; letter-spacing: -0.03em; }
+.dev-genre { font-size: 13px; color: var(--faint); }
+.dev-blurb { font-size: 15px; line-height: 1.55; color: var(--dim); }
+.dev-progress { padding-left: 12px; border-left: 2px solid color-mix(in srgb, var(--from) 70%, white 25%); font-size: 14px; }
+.dev-tech { display: flex; flex-wrap: wrap; gap: 6px; }
+.dev-tech span { padding: 4px 10px; border-radius: 8px; font-size: 12px; color: var(--dim); background: rgba(255, 255, 255, 0.05); border: 1px solid var(--hair); }
+@media (prefers-reduced-motion: reduce) { .dev-badge i { animation: none; } .dev-art img { transition: none; } }
+
+.st-card-art { position: relative; overflow: hidden; }
+.st-card-art.has-cover img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s var(--ease); }
+.st-card-art.has-cover::after { content: ''; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(6, 8, 14, 0.85), rgba(6, 8, 14, 0) 62%); }
+.st-card:hover .st-card-art.has-cover img { transform: scale(1.05); }
+.st-card-art span { position: relative; z-index: 1; text-shadow: 0 2px 14px rgba(0, 0, 0, 0.5); }
+.st-free.dev { background: rgba(251, 191, 36, 0.16); color: #fcd34d; }
+.st .st-buy.dev { background: linear-gradient(90deg, rgba(251, 191, 36, 0.12), rgba(109, 40, 217, 0.12)); border-color: rgba(251, 191, 36, 0.3); }
+.st-next li::before { background: #fbbf24; }
