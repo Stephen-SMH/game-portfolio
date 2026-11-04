@@ -273,3 +273,41 @@ h3 { font-size: 15px; font-weight: 500; }
 @media (max-width: 960px) { .st-grid, .st-cols { grid-template-columns: 1fr; } .st-crumb { display: none; } .st-top-in { justify-content: space-between; } }
 .st section, .st-media, .st-main, .st-buy { padding: 0; }
 .st .st-buy { padding: 22px 26px; }
+
+/* ---------- Store page: facts, engineering notes, soundtrack and credits (shown when a game has them) ---------- */
+.st-facts { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; margin: 0 0 40px; }
+.st-facts div { padding: 16px 18px; border-radius: 14px; border: 1px solid var(--hair); background: rgba(255, 255, 255, 0.03); }
+.st-facts b { display: block; font-size: clamp(28px, 3vw, 40px); line-height: 1; letter-spacing: -0.04em; font-weight: 600; font-variant-numeric: tabular-nums; }
+.st-facts span { display: block; margin-top: 8px; font-size: 13.5px; color: var(--dim); line-height: 1.35; }
+.st-inspired { margin-top: 18px; padding: 10px 14px; border-left: 2px solid var(--blue); font-size: 14px; color: var(--faint); max-width: 62ch; }
+.st-hood, .st-ost, .st-credits { margin-top: 44px; }
+.st-hood-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 24px; margin-bottom: 14px; }
+.st-hood-head .st-h { margin: 0; }
+.st-hood-head p { color: var(--dim); font-size: 14.5px; max-width: 60ch; } .st-hood-head a { color: var(--blue); }
+.st-hood-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.st-hood-grid article { display: grid; align-content: start; gap: 8px; padding: 20px; border-radius: 16px; border: 1px solid var(--hair); background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02)); }
+.st-hood-n { font: 500 12px var(--mono); color: var(--blue); }
+.st-hood-grid h3 { font-size: 18px; font-weight: 600; letter-spacing: -0.02em; }
+.st-hood-grid p { color: var(--dim); font-size: 14.5px; line-height: 1.55; }
+.st-hood-grid .st-proof { margin-top: 4px; padding-top: 10px; border-top: 1px solid var(--hair); color: #a9c4f7; font-size: 13.5px; }
+.st-ost-note { color: var(--dim); font-size: 15px; max-width: 72ch; margin-bottom: 14px; }
+.st-table-wrap { overflow-x: auto; border: 1px solid var(--hair); border-radius: 16px; background: rgba(255, 255, 255, 0.025); }
+.st-table { width: 100%; min-width: 640px; border-collapse: collapse; font-size: 14.5px; }
+.st-table th { text-align: left; padding: 12px 16px; font: 500 11px var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--faint); border-bottom: 1px solid var(--hair); }
+.st-table td { padding: 11px 16px; border-bottom: 1px solid var(--hair); vertical-align: middle; }
+.st-table tr:last-child td { border-bottom: 0; }
+.st-table td b { font-weight: 600; } .st-table td a { color: var(--fg); } .st-table td a:hover { color: var(--blue); }
+.st-dim { color: var(--dim); } .st-num { font-variant-numeric: tabular-nums; color: var(--dim); white-space: nowrap; }
+.st-moment { display: inline-block; padding: 3px 10px; border-radius: 999px; font: 500 12px var(--mono); white-space: nowrap; background: rgba(108, 156, 243, 0.14); color: #a9c4f7; }
+.st-moment.war { background: rgba(244, 114, 94, 0.14); color: #f5a596; }
+.st-listen { display: inline-flex; align-items: center; gap: 10px; padding: 6px 12px 6px 8px; border-radius: 999px; border: 1px solid var(--hair); background: rgba(255, 255, 255, 0.04); color: var(--fg); cursor: pointer; transition: background 0.3s, border-color 0.3s; }
+.st-listen:hover { background: rgba(108, 156, 243, 0.14); border-color: rgba(108, 156, 243, 0.45); }
+.st-listen:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+.st-listen svg { width: 22px; height: 22px; padding: 5px; border-radius: 50%; background: var(--blue); fill: #0b1020; }
+.st-listen .i-pause, .st-listen.on .i-play { display: none; } .st-listen.on .i-pause { display: inline; }
+.st-listen-bar { position: relative; width: 70px; height: 4px; border-radius: 2px; background: var(--hair); overflow: hidden; }
+.st-listen-bar i { position: absolute; inset: 0 auto 0 0; width: 0; background: var(--blue); }
+.st-licence { margin-top: 10px; font-size: 13px; color: var(--faint); } .st-licence a { color: var(--dim); text-decoration: underline; text-underline-offset: 2px; }
+.st-sub { margin: 28px 0 12px; font-size: 17px; font-weight: 600; letter-spacing: -0.02em; }
+@media (max-width: 1100px) { .st-facts { grid-template-columns: repeat(3, minmax(0, 1fr)); } .st-hood-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) { .st-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); } .st-hood-grid { grid-template-columns: minmax(0, 1fr); } }

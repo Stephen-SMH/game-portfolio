@@ -1,6 +1,9 @@
 # Stephen — Game Portfolio
 
-Game portfolio built with Astro. Games live in `src/data/games.ts`, page text in `src/data/profile.ts`.
+Game portfolio built with Astro. Games live in `src/data/games.ts`, page text in `src/data/profile.ts`, and each
+game's store page in `src/data/store.ts`. A store page can also have key facts, "Under the hood" engineering notes,
+a soundtrack table and credits (see Medieval Conquest). Screenshots go in `public/shots/<slug>/` and soundtrack
+previews in `public/audio/<slug>/`.
 My software engineering portfolio is separate: https://stephen-smh.github.io
 
 ```

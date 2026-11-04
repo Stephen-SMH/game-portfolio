@@ -16,6 +16,23 @@ export interface Game {
 
 export const games: Game[] = [
   {
+    title: 'Medieval Conquest',
+    headline: 'Medieval Conquest: Four Campaigns, One Crown',
+    genre: 'Turn-based strategy',
+    blurb: 'A turn-based medieval strategy game for the browser, desktop and Android. Lead England, France, the Crusaders or the Vikings across real maps, mission by mission.',
+    points: [
+      'Built the whole game in Godot 4: a map of regions, mixed armies of up to 20 soldiers, orders drawn as arrows and battles that play out on the map.',
+      'Wrote an AI with three difficulty levels that gathers several armies against one target, forecasts each battle with simulated fights and follows up on what it wins.',
+      'Turned open coastline data into seven historical maps with a Python pipeline, and generated four campaigns of 43 missions as data.',
+      'Shipped Web, Windows, macOS, Linux and Android builds from one GitHub Actions pipeline, with 730 automated checks on every push.',
+    ],
+    tech: ['Godot 4', 'GDScript', 'Python', 'GitHub Actions'],
+    repo: 'https://github.com/Stephen-SMH/medieval-conquest',
+    play: 'https://stephen-smh.github.io/medieval-conquest/',
+    from: '#b4232a',
+    to: '#5c3310',
+  },
+  {
     title: 'Werewolf',
     headline: 'Werewolf: Social Deduction vs. Bots',
     genre: 'Social deduction',

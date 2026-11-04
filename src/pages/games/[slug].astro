@@ -28,6 +28,7 @@ const slides = shots.length ? shots : art.map((p) => ({ src: '', alt: p }));
 const others = games.filter((x) => x.title !== s.title);
 const slugOf = (title: string) => store.find((x) => x.title === title)?.slug;
 const cta = g.play ?? g.repo;
+const audio = (file: string) => `${base}/audio/${s.slug}/${file}.mp3`;
 ---
 <Base title={`${s.title} on ${profile.first}'s Game Store`} description={s.short}>
   <header class="st-top">
@@ -95,6 +96,12 @@ const cta = g.play ?? g.repo;
       </div>
     </section>
 
+    {s.facts && (
+      <section class="st-facts" aria-label="At a glance">
+        {s.facts.map(([n, l]) => <div><b>{n}</b><span>{l}</span></div>)}
+      </section>
+    )}
+
     <div class="st-cols">
       <section class="st-main">
         <h2 class="st-h">About this game</h2>
@@ -102,6 +109,7 @@ const cta = g.play ?? g.repo;
         <ul class="st-feats">
           {g.points.map((p) => <li>{p}</li>)}
         </ul>
+        {s.inspiredBy && <p class="st-inspired">{s.inspiredBy}</p>}
 
         <h2 class="st-h">Update history</h2>
         <ol class="st-log">
@@ -139,6 +147,85 @@ const cta = g.play ?? g.repo;
       </aside>
     </div>
 
+    {s.highlights && (
+      <section class="st-hood" aria-labelledby="hood">
+        <div class="st-hood-head">
+          <h2 class="st-h" id="hood">Under the hood</h2>
+          <p>How it is built, for anyone reviewing the engineering. The code, the tests and the build pipeline are all in the <a href={g.repo} target="_blank" rel="noopener">repository</a>.</p>
+        </div>
+        <div class="st-hood-grid">
+          {s.highlights.map((h, i) => (
+            <article>
+              <span class="st-hood-n">{String(i + 1).padStart(2, '0')}</span>
+              <h3>{h.title}</h3>
+              <p>{h.body}</p>
+              {h.proof && <p class="st-proof">{h.proof}</p>}
+            </article>
+          ))}
+        </div>
+      </section>
+    )}
+
+    {s.soundtrack && (
+      <section class="st-ost" aria-labelledby="ost">
+        <h2 class="st-h" id="ost">Soundtrack</h2>
+        <p class="st-ost-note">{s.soundtrack.note}</p>
+        <div class="st-table-wrap">
+          <table class="st-table">
+            <thead><tr><th>Where it plays</th><th>Track</th><th>Composer</th><th>Mood</th><th>Length</th><th>Preview</th></tr></thead>
+            <tbody>
+              {s.soundtrack.tracks.map((t) => (
+                <tr>
+                  <td><span class={`st-moment${t.moment.startsWith('Battle') ? ' war' : ''}`}>{t.moment}</span></td>
+                  <td><a href={t.url} target="_blank" rel="noopener"><b>{t.title}</b></a></td>
+                  <td>{t.artist}</td>
+                  <td class="st-dim">{t.mood}</td>
+                  <td class="st-num">{t.length}</td>
+                  <td>{t.preview && (
+                    <button class="st-listen" type="button" data-src={audio(t.preview)} aria-label={`Play a preview of ${t.title}`}>
+                      <svg viewBox="0 0 16 16" aria-hidden="true"><path class="i-play" d="M4 2.5v11l9-5.5z" /><path class="i-pause" d="M3.5 2.5h3v11h-3zM9.5 2.5h3v11h-3z" /></svg>
+                      <span class="st-listen-bar"><i></i></span>
+                    </button>
+                  )}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p class="st-licence">Music by <a href="https://creatorchords.com" target="_blank" rel="noopener">Alexander Nakarada (CreatorChords)</a> and <a href="https://incompetech.com" target="_blank" rel="noopener">Kevin MacLeod (incompetech.com)</a>. {s.soundtrack.licence} <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">Licence</a>.</p>
+
+        {s.soundtrack.sounds && (<>
+          <h3 class="st-sub">Sound effects</h3>
+          <div class="st-table-wrap">
+            <table class="st-table">
+              <thead><tr><th>Sound</th><th>When it plays</th><th>Source</th></tr></thead>
+              <tbody>
+                {s.soundtrack.sounds.map((x) => <tr><td><b>{x.name}</b></td><td>{x.when}</td><td class="st-dim">{x.source}</td></tr>)}
+              </tbody>
+            </table>
+          </div>
+          {s.soundtrack.soundsNote && <p class="st-licence">{s.soundtrack.soundsNote}</p>}
+        </>)}
+      </section>
+    )}
+
+    {s.credits && (
+      <section class="st-credits" aria-labelledby="credits">
+        <h2 class="st-h" id="credits">Credits</h2>
+        <div class="st-table-wrap">
+          <table class="st-table">
+            <thead><tr><th>What</th><th>By</th><th>Licence</th></tr></thead>
+            <tbody>
+              <tr><td><b>Design, code, AI, tools and maps</b></td><td><a href={profile.github} target="_blank" rel="noopener">{profile.first}</a></td><td class="st-dim">Source on GitHub</td></tr>
+              {s.credits.map((c) => (
+                <tr><td><b>{c.what}</b></td><td>{c.url ? <a href={c.url} target="_blank" rel="noopener">{c.who}</a> : c.who}</td><td class="st-dim">{c.licence}</td></tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    )}
+
     <h2 class="st-h">More games</h2>
     <div class="st-more">
       {others.map((o) => (
@@ -164,5 +251,26 @@ const cta = g.play ?? g.repo;
     document.getElementById('next')?.addEventListener('click', () => go(cur + 1));
     thumbs.forEach((t, i) => t.addEventListener('click', () => go(i)));
     addEventListener('keydown', (e) => { if (e.key === 'ArrowLeft') go(cur - 1); if (e.key === 'ArrowRight') go(cur + 1); });
+
+    // Soundtrack previews: one shared player, so starting a row stops the last one.
+    const player = new Audio();
+    let playing: HTMLElement | null = null;
+    const paint = (b: HTMLElement | null, on: boolean) => b?.classList.toggle('on', on);
+    player.addEventListener('timeupdate', () => {
+      const bar = playing?.querySelector<HTMLElement>('.st-listen-bar i');
+      if (bar && player.duration) bar.style.width = `${(player.currentTime / player.duration) * 100}%`;
+    });
+    player.addEventListener('ended', () => paint(playing, false));
+    document.querySelectorAll<HTMLElement>('.st-listen').forEach((b) => b.addEventListener('click', async () => {
+      if (playing === b && !player.paused) { player.pause(); paint(b, false); return; }
+      if (playing !== b) {
+        paint(playing, false);
+        const old = playing?.querySelector<HTMLElement>('.st-listen-bar i');
+        if (old) old.style.width = '0';
+        playing = b;
+        player.src = b.dataset.src!;
+      }
+      try { await player.play(); paint(b, true); } catch { paint(b, false); }
+    }));
   </script>
 </Base>
