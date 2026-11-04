@@ -40,7 +40,7 @@ export const store: Store[] = [
     title: 'Medieval Conquest',
     short: 'Turn-based medieval strategy for the browser, desktop and Android. Four historical campaigns, 43 missions, six civilizations and an AI that fights back.',
     status: 'Playable online',
-    version: '2.4.0',
+    version: '2.4.1',
     released: 'Nov 2, 2026',
     updated: 'Nov 5, 2026',
     genres: ['Turn-based strategy', 'Historical', 'Campaign', 'Wargame', 'Singleplayer', 'Hotseat'],
@@ -81,7 +81,7 @@ export const store: Store[] = [
       {
         title: 'Tested and shipped like a product',
         body: '738 headless checks cover rules, battles, the AI, saves and every mission. Tagging a version builds Web, Windows, macOS, Linux and Android in GitHub Actions, publishes a release with all five downloads and deploys the web build to GitHub Pages.',
-        proof: 'Six releases in four days, each built and deployed by the pipeline.',
+        proof: 'Seven releases in four days, each built and deployed by the pipeline.',
       },
       {
         title: 'Debugging the browser build',
@@ -137,6 +137,7 @@ export const store: Store[] = [
       { what: 'Fonts: Cinzel, IM FELL English, Grenze Gotisch, Noto', who: 'Natanael Gama, Igino Marini, Omnibus-Type, the Noto Project', licence: 'SIL OFL 1.1' },
     ],
     patchNotes: [
+      { version: '2.4.1', date: 'Nov 5, 2026', title: 'A painted cover', body: 'The title screen shows a painted cover behind the menu, with the title outlined so it reads over it.' },
       { version: '2.4.0', date: 'Nov 5, 2026', title: 'Battle sounds and clearer armies', body: 'Clicking any army you can see lists its soldiers on the banner, Forge upgrades starred. Attacks open with a roar and clashing steel; your men cheer a win and drums toll a loss. Exit asks whether to save first.' },
       { version: '2.3.0', date: 'Nov 4, 2026', title: 'New soundtrack', body: 'Ten cinematic medieval pieces replace three short loops, at about 128 kbps instead of 72. Battle music now swells when armies clash.' },
       { version: '2.2.1', date: 'Nov 4, 2026', title: 'Sound in the browser', body: 'Fixed silent audio in the web build: the audio buses are now defined up front, so Web Audio no longer mutes a feedback loop.' },
