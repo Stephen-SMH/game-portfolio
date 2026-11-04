@@ -7,8 +7,10 @@ export interface Game {
   tech: string[];
   repo: string;
   play?: string;
-  /** Screenshot in /public, shown in a tilted phone frame on the poster. */
+  /** Portrait phone screenshot in /public, shown in a tilted phone frame on the poster. */
   shot?: string;
+  /** Landscape screenshot in /public, shown in a tilted window on the poster and full-bleed on the store capsule. */
+  cover?: string;
   /** Poster gradient. */
   from: string;
   to: string;
@@ -29,6 +31,7 @@ export const games: Game[] = [
     tech: ['Godot 4', 'GDScript', 'Python', 'GitHub Actions'],
     repo: 'https://github.com/Stephen-SMH/medieval-conquest',
     play: 'https://stephen-smh.github.io/medieval-conquest/',
+    cover: 'shots/medieval-conquest/01-orders.jpg',
     from: '#b4232a',
     to: '#5c3310',
   },
@@ -53,18 +56,19 @@ export const games: Game[] = [
   {
     title: 'The Knock',
     headline: 'The Knock: Five Nights, One Door',
-    genre: 'Narrative survival',
-    blurb: 'A door-answering survival game made for Digit7 Jam 2026. Decide who to let in, and live with it.',
+    genre: 'Narrative horror',
+    blurb: 'A narrative horror game made solo for Digit7 Jam 2026. It has rained for forty days, and every night someone knocks. Work out who is really at the gate before you open it.',
     points: [
-      'Designed five nights of dinner, dusk and a knock. Each visitor brings one real decision with lasting consequences.',
-      'Built a 3D version (Three.js) and a 2D version (Phaser) that share one game core: the same nights, visitors and choices.',
-      'Made the music react to danger, crossfading to a tenser bed as the knock approaches.',
-      'Rendered the 3D scene at a deliberately low resolution for a chunky pixel look.',
+      'Designed a fair deduction puzzle: each night the TV bulletin teaches one place to look, most signs are shared between killers, and only the right combination gives one away.',
+      'Built it in TypeScript and Phaser with a new household, new killers and new visitors every run, and 15 endings decided by who you let in, shot or turned away.',
+      'Drew the pixel art and made the music, voices, rain and scares in code at runtime with Web Audio, plus a handful of CC0 sound files.',
+      'Tested the hosted build in Chrome, Firefox and WebKit, including emulated iPhone and Android touch screens in landscape.',
     ],
-    tech: ['TypeScript', 'Three.js', 'Phaser', 'Vite'],
+    tech: ['TypeScript', 'Phaser', 'Web Audio', 'Vite'],
     repo: 'https://github.com/Stephen-SMH/the-knock',
-    from: '#0f766e',
-    to: '#1d4ed8',
+    cover: 'shots/the-knock/01-gate.jpg',
+    from: '#7f1d1d',
+    to: '#0c0a09',
   },
   {
     title: 'Uno Game',
@@ -78,6 +82,7 @@ export const games: Game[] = [
     ],
     tech: ['Python'],
     repo: 'https://github.com/Stephen-SMH/Uno_Game_Python',
+    cover: 'shots/uno-game/01-reveal.jpg',
     from: '#be123c',
     to: '#c2410c',
   },
@@ -92,6 +97,7 @@ export const games: Game[] = [
     ],
     tech: ['Assembly', 'C'],
     repo: 'https://github.com/Stephen-SMH/T-rex',
+    cover: 'shots/t-rex/01-jump.jpg',
     from: '#a16207',
     to: '#15803d',
   },

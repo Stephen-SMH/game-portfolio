@@ -100,7 +100,9 @@ const stats = [
                 <h3>{g.headline}</h3>
                 {g.shot
                   ? <div class="device"><img src={`${base}/${g.shot}`} alt={`${g.title} screenshot`} loading="lazy" width="430" height="900" /></div>
-                  : <div class="ghost-type" aria-hidden="true">{g.title}</div>}
+                  : g.cover
+                    ? <div class="screen"><img src={`${base}/${g.cover}`} alt={`${g.title} screenshot`} loading="lazy" width="1280" height="720" /></div>
+                    : <div class="ghost-type" aria-hidden="true">{g.title}</div>}
               </div>
             </div>
           </div>

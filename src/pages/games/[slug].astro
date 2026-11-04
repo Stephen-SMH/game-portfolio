@@ -70,7 +70,15 @@ const audio = (file: string) => `${base}/audio/${s.slug}/${file}.mp3`;
       </section>
 
       <aside class="st-side">
-        <div class="st-capsule"><div class="poster" style={`--from:${g.from};--to:${g.to}`}><h3>{g.headline}</h3><div class="ghost-type" aria-hidden="true">{s.title}</div></div></div>
+        <div class="st-capsule">
+          <div class={`poster${g.cover ? ' has-cover' : ''}`} style={`--from:${g.from};--to:${g.to}`}>
+            {g.cover && <img class="cover" src={`${base}/${g.cover}`} alt="" width="1280" height="720" />}
+            <h3>{g.headline}</h3>
+            {!g.cover && (g.shot
+              ? <div class="device"><img src={`${base}/${g.shot}`} alt="" width="430" height="900" /></div>
+              : <div class="ghost-type" aria-hidden="true">{s.title}</div>)}
+          </div>
+        </div>
         <p class="st-short">{s.short}</p>
         <dl class="st-info">
           <div><dt>Status</dt><dd><span class="st-badge">{s.status}</span></dd></div>

@@ -134,6 +134,10 @@ h3 { font-size: 15px; font-weight: 500; }
 .device { position: absolute; z-index: 1; left: 50%; bottom: -40%; width: 40%; transform: translateX(-50%) rotate(-7deg) perspective(900px) rotateX(10deg); padding: 7px; border-radius: 34px; background: #0b0d14; box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.55), inset 0 0 0 1px rgba(255, 255, 255, 0.14); transition: transform 1s var(--ease); }
 .device img { border-radius: 28px; width: 100%; height: auto; }
 .poster-frame:hover .device { transform: translateX(-50%) translateY(-14px) rotate(-4deg) perspective(900px) rotateX(6deg); }
+/* Landscape games: the screenshot in a tilted window, the desktop cousin of .device */
+.screen { position: absolute; z-index: 1; left: 50%; bottom: -12%; width: 88%; transform: translateX(-46%) rotate(-5deg) perspective(1100px) rotateX(8deg); padding: 7px; border-radius: 20px; background: #0b0d14; box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.6), inset 0 0 0 1px rgba(255, 255, 255, 0.14); transition: transform 1s var(--ease); }
+.screen img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 14px; }
+.poster-frame:hover .screen { transform: translateX(-46%) translateY(-14px) rotate(-3deg) perspective(1100px) rotateX(5deg); }
 .ghost-type { position: absolute; left: 0; right: 0; bottom: -0.16em; padding-inline: 0.05em; font-size: clamp(110px, 18vw, 290px); line-height: 0.8; font-weight: 700; letter-spacing: -0.07em; color: rgba(255, 255, 255, 0.14); white-space: nowrap; overflow: hidden; text-align: center; }
 .detail { padding-top: 10px; }
 .detail-head { display: flex; align-items: center; flex-wrap: wrap; gap: 18px; }
@@ -243,6 +247,11 @@ h3 { font-size: 15px; font-weight: 500; }
 .st-note { margin-top: 10px; font-size: 13px; color: var(--faint); } .st-note code { font-family: var(--mono); color: var(--dim); }
 .st-side { background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02)); border: 1px solid var(--hair); border-radius: 20px; padding: 18px; display: grid; gap: 16px; }
 .st-capsule .poster { aspect-ratio: 460 / 215; border-radius: 12px; padding: 16px; } .st-capsule .poster h3 { font-size: 22px; max-width: 16ch; } .st-capsule .ghost-type { font-size: 90px; }
+.st-capsule .cover { position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; object-fit: cover; }
+.st-capsule .has-cover::before { content: ''; position: absolute; inset: 0; z-index: 1; background: linear-gradient(180deg, rgba(6, 8, 14, 0.88) 0%, rgba(6, 8, 14, 0.45) 48%, rgba(6, 8, 14, 0) 78%); }
+.st-capsule .has-cover h3 { text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6); }
+.st-capsule .device { left: auto; right: 7%; bottom: -78%; width: 28%; padding: 4px; border-radius: 16px; transform: rotate(-7deg); }
+.st-capsule .device img { border-radius: 12px; }
 .st-short { font-size: 15px; line-height: 1.5; color: var(--dim); }
 .st-info { margin: 0; display: grid; gap: 8px; font-size: 14px; }
 .st-info div { display: flex; justify-content: space-between; gap: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--hair); }
@@ -270,7 +279,7 @@ h3 { font-size: 15px; font-weight: 500; }
 .st-card { border-radius: 16px; overflow: hidden; border: 1px solid var(--hair); background: rgba(255,255,255,.03); transition: transform .4s var(--ease), border-color .3s; } .st-card:hover { transform: translateY(-4px); border-color: rgba(108,156,243,.5); }
 .st-card-art { aspect-ratio: 16 / 8; display: grid; place-items: end start; padding: 14px; background: radial-gradient(120% 90% at 20% 0%, var(--from), var(--to)); font-size: 30px; font-weight: 700; letter-spacing: -0.05em; color: rgba(255,255,255,.85); }
 .st-card-b { display: grid; gap: 2px; padding: 12px 14px; } .st-card-b small { color: var(--faint); } .st-free { justify-self: end; margin-top: -26px; padding: 3px 10px; border-radius: 6px; background: rgba(127,214,138,.18); color: #9be6a5; font-size: 13px; font-weight: 600; }
-@media (max-width: 960px) { .st-grid, .st-cols { grid-template-columns: 1fr; } .st-crumb { display: none; } .st-top-in { justify-content: space-between; } }
+@media (max-width: 960px) { .st-grid, .st-cols { grid-template-columns: minmax(0, 1fr); } .st-crumb { display: none; } .st-top-in { justify-content: space-between; } }
 .st section, .st-media, .st-main, .st-buy { padding: 0; }
 .st .st-buy { padding: 22px 26px; }
 
